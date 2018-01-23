@@ -4,13 +4,22 @@
     <title>Frendy's blog</title>
     <script type="text/javascript" src="js/vue.js"></script>
     <script type="text/javascript" src="js/easeljs.js"></script>
+    <script type="text/javascript" src="js/algebra-0.2.6.min.js"></script>
     <script type="text/javascript" src="js/tweenjs.js"></script>
 </head>
 
 <body>
     <canvas id="background" :width="width" :height="height" ref="bg"></canvas>
     <script>
+    //var Fraction = algebra.Fraction;
+    //var Expression = algebra.Expression;
+    //var Equation = algebra.Equation;
+
     window.onload = function() {
+
+    var answer2 = algebra.parse("y=2x").eval({x:2});
+    var y = answer2.toString();
+    alert(y);
         var bg = new Vue({
             el: "#background",
             data: {
@@ -29,12 +38,45 @@
 	    //形状实例的设置位置
 	    circle.x = circle.y = 50;
 		//添加形状实例到舞台显示列表
-	    stage.addChild(circle);
+	    //stage.addChild(circle);
 	    createjs.MotionGuidePlugin.install();
-		createjs.Tween.get(circle).to({guide:{ path:[0,0, 0,300,300,300] }},7000);
+        ///createjs.Tween.get(circle).to({guide:{ path:[0,0, 0,300,300,300] }},7000);
+		//createjs.Tween.get(circle).lineTo(200,200);
 		//circle.graphics.moveTo(0,0).curveTo(0,200,200,200).curveTo(200,0,0,0);
-		createjs.Ticker.framerate = 60;
-		createjs.Ticker.addEventListener("tick", stage);
+        var Graphics = createjs.Graphics;    //
+        //var line = new Graphics().beginStroke("red").moveTo(5,35).lineTo(110,75);
+        //var shape = new createjs.Shape(line);
+        //stage.addChild(shape);;
+
+        createjs.Ticker.framerate = 60;
+        var container = new createjs.Container();
+        let line,x=0,y1,y2,sw = stage.canvas.clientWidth,sh = stage.canvas.clientHeight;
+        drawLine(stage,"y=x");
+        /*createjs.Ticker.addEventListener("tick", function(event){
+            line = new createjs.Shape();
+            x=x+1;y1=100+Math.sin(x/100)*100;y2=Math.pow(x,1/3).toFixed(2);
+            line.graphics.beginStroke("red").moveTo(x,y1).lineTo(x,sh);
+            container.addChild(line);
+            stage.addChild(container);
+            stage.update();
+        });*/
+    }
+
+    function drawLine(stage,str){
+        let height = stage.canvas.clientWidth,width = stage.canvas.clientHeight;
+        let unit = height/2,t;   
+        for(let t=0;t<width;t++){
+            x = t/unit;
+            eval(`
+                var answer1 = algebra.parse("x=${x}").solveFor("x");
+                var answer2 = algebra.parse("$(str)").solveFor("y");
+                y = new Equation(answer1, answer2);
+                `);
+            x = t;
+            y = -(parseFloat(y) * unit +unit)
+            stage.addChild(new createjs.Point(x,y));
+        }
+        stage.update();
     }
     </script>
 </body>
