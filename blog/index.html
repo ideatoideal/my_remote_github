@@ -1,83 +1,90 @@
+<!DOCTYPE html>
 <html>
 
 <head>
-    <title>Frendy's blog</title>
-    <script type="text/javascript" src="js/vue.js"></script>
-    <script type="text/javascript" src="js/easeljs.js"></script>
-    <script type="text/javascript" src="js/algebra-0.2.6.min.js"></script>
-    <script type="text/javascript" src="js/tweenjs.js"></script>
+    <title测试</title>
+        <script src="js/algebra-0.2.6.min.js"></script>
+        <script src="js/vue.js"></script>
+        <script src="plugin/katex/katex.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="plugin/katex/katex.min.css">
 </head>
 
 <body>
-    <canvas id="background" :width="width" :height="height" ref="bg"></canvas>
+    <div :style="style" id="bg" >
+        <div v-for="item in items" :style="item.style">{{item.value}}</div>
+    </div>
     <script>
-    //var Fraction = algebra.Fraction;
-    //var Expression = algebra.Expression;
-    //var Equation = algebra.Equation;
-
     window.onload = function() {
+        let bg = document.getElementById("test");
 
-    var answer2 = algebra.parse("y=2x").eval({x:2});
-    var y = answer2.toString();
-    alert(y);
-        var bg = new Vue({
-            el: "#background",
-            data: {
-                width: document.body.clientWidth,
-                height: document.body.clientHeight,
-                stage: null
+        let vbg = new Vue({
+            el: '#bg',
+            data:{
+                style:{
+                    position:"absolute",
+                    width:window.screen.width+"px",
+                    height:window.screen.height+"px"
+                },
+                items:[]
             },
-            mounted: function() {
-
-
-        	}
+            mounted:function(){
+                let len = Math.ceil(Math.random()*100);
+                let opacity ;
+                while(len--){
+                    opacity = Math.random();
+                    this.items.push(
+                        {
+                            value:Math.ceil(Math.random()*1000),
+                            style:{
+                                position:"absolute",
+                                top:window.screen.width*Math.random()+"px",
+                                left:window.screen.height*Math.random()+"px",
+                                opacity:opacity,
+                                fontSize:opacity*100+"px",
+                                //transform:"rotate3d(0.035329608225423526,0.9062105969381993,0.1719683769708069,360)"
+                                transform:`rotate3d(${Math.random()},${Math.random()},${Math.random()},${Math.random()*360}deg)`
+                            }
+                        }
+                    );
+                }
+                let items = this.items;
+                setInterval(function(){
+                    for(var i=0;i<items.length;i++){
+                        items[i].style.fontSize = (items[i].style.fontSize.split("px")[0])+"px";
+                    }
+                },100);
+/*
+                for(let i=0;i<this.items.length;i++){
+                    this.items[i].style.fontSize = "100px";//(this.items[i].style.fontSize.split("px")[0]++)+"px";
+                }*/
+                    
+            }
         })
-        stage = new createjs.Stage("background");
-        circle = new createjs.Shape();
-	    circle.graphics.beginFill("red").drawCircle(0, 0, 40);
-	    //形状实例的设置位置
-	    circle.x = circle.y = 50;
-		//添加形状实例到舞台显示列表
-	    //stage.addChild(circle);
-	    createjs.MotionGuidePlugin.install();
-        ///createjs.Tween.get(circle).to({guide:{ path:[0,0, 0,300,300,300] }},7000);
-		//createjs.Tween.get(circle).lineTo(200,200);
-		//circle.graphics.moveTo(0,0).curveTo(0,200,200,200).curveTo(200,0,0,0);
-        var Graphics = createjs.Graphics;    //
-        //var line = new Graphics().beginStroke("red").moveTo(5,35).lineTo(110,75);
-        //var shape = new createjs.Shape(line);
-        //stage.addChild(shape);;
 
-        createjs.Ticker.framerate = 60;
-        var container = new createjs.Container();
-        let line,x=0,y1,y2,sw = stage.canvas.clientWidth,sh = stage.canvas.clientHeight;
-        drawLine(stage,"y=x");
-        /*createjs.Ticker.addEventListener("tick", function(event){
-            line = new createjs.Shape();
-            x=x+1;y1=100+Math.sin(x/100)*100;y2=Math.pow(x,1/3).toFixed(2);
-            line.graphics.beginStroke("red").moveTo(x,y1).lineTo(x,sh);
-            container.addChild(line);
-            stage.addChild(container);
-            stage.update();
-        });*/
+
+
+
+        var formula = katex.renderToString("c = \\pm\\sqrt{a^2 + b^2}");
+
+
+
+        Vue.component('anchored-heading', {
+            render: function(createElement) {
+                return createElement(
+                    'h' + this.level, // tag name 标签名称
+                    this.$slots.default // 子组件中的阵列
+                )
+            },
+            props: {
+                level: {
+                    type: Number,
+                    required: true
+                }
+            }
+        })
+        //katex.render("c = \\pm\\sqrt{a^2 + b^2}",el);
     }
 
-    function drawLine(stage,str){
-        let height = stage.canvas.clientWidth,width = stage.canvas.clientHeight;
-        let unit = height/2,t;   
-        for(let t=0;t<width;t++){
-            x = t/unit;
-            eval(`
-                var answer1 = algebra.parse("x=${x}").solveFor("x");
-                var answer2 = algebra.parse("$(str)").solveFor("y");
-                y = new Equation(answer1, answer2);
-                `);
-            x = t;
-            y = -(parseFloat(y) * unit +unit)
-            stage.addChild(new createjs.Point(x,y));
-        }
-        stage.update();
-    }
     </script>
 </body>
 
