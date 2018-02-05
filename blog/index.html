@@ -9,9 +9,9 @@
         <link rel="stylesheet" type="text/css" href="plugin/katex/katex.min.css">
 </head>
 
-<body>
-    <div :style="style" id="bg" >
-        <div v-for="item in items" :style="item.style">{{item.value}}</div>
+<body style="overflow: hidden;">
+    <div :style="style" id="bg">
+        <div v-for="item in items" :style="item.style" v-html="item.html"></div>
     </div>
     <script>
     window.onload = function() {
@@ -19,72 +19,149 @@
 
         let vbg = new Vue({
             el: '#bg',
-            data:{
-                style:{
-                    position:"absolute",
-                    width:window.screen.width+"px",
-                    height:window.screen.height+"px"
+            data: {
+                style: {
+                    position: "absolute",
+                    width: window.screen.width + "px",
+                    height: window.screen.height + "px",
+                    overflow: "hidden",
+                    perspective: window.screen.width + "px"
                 },
-                items:[]
+                items: []
             },
-            mounted:function(){
-                let len = Math.ceil(Math.random()*100);
-                let opacity ;
-                while(len--){
+            mounted: function() {
+                let apos = Math.floor(showArrays.length * Math.random())
+                let array = showArrays[apos].array,
+                    type = showArrays[apos].type;
+                let len = Math.min(array.length, 20 + Math.ceil(Math.random() * 30));
+                let opacity, x, y, z, angle, top, left, fpos, html, fontSize;
+                while (len--) {
                     opacity = Math.random();
-                    this.items.push(
-                        {
-                            value:Math.ceil(Math.random()*1000),
-                            style:{
-                                position:"absolute",
-                                top:window.screen.width*Math.random()+"px",
-                                left:window.screen.height*Math.random()+"px",
-                                opacity:opacity,
-                                fontSize:opacity*100+"px",
-                                //transform:"rotate3d(0.035329608225423526,0.9062105969381993,0.1719683769708069,360)"
-                                transform:`rotate3d(${Math.random()},${Math.random()},${Math.random()},${Math.random()*360}deg)`
-                            }
-                        }
-                    );
-                }
-                let items = this.items;
-                setInterval(function(){
-                    for(var i=0;i<items.length;i++){
-                        items[i].style.fontSize = (items[i].style.fontSize.split("px")[0])+"px";
+                    x = Math.random();
+                    y = Math.random();
+                    z = Math.random();
+                    angle = Math.random();
+                    top = window.screen.height * Math.random();
+                    left = window.screen.width * Math.random();
+                    fpos = Math.floor(Math.random() * array.length);
+                    //console.log(array[fpos])
+                    if (type == "Latex") {
+                        html = katex.renderToString(array[fpos]);
+                    } else {
+                        html = array[fpos];
                     }
-                },100);
-/*
-                for(let i=0;i<this.items.length;i++){
-                    this.items[i].style.fontSize = "100px";//(this.items[i].style.fontSize.split("px")[0]++)+"px";
-                }*/
-                    
-            }
-        })
 
-
-
-
-        var formula = katex.renderToString("c = \\pm\\sqrt{a^2 + b^2}");
-
-
-
-        Vue.component('anchored-heading', {
-            render: function(createElement) {
-                return createElement(
-                    'h' + this.level, // tag name 标签名称
-                    this.$slots.default // 子组件中的阵列
-                )
-            },
-            props: {
-                level: {
-                    type: Number,
-                    required: true
+                    fontSize = 50 * opacity + 50 / array[fpos].length
+                    array.splice(fpos, 1);
+                    this.items.push({
+                        html: html,
+                        style: {
+                            position: "absolute",
+                            top: top + "px",
+                            left: left + "px",
+                            opacity: opacity,
+                            fontSize: fontSize + "px",
+                            transform: `rotate3d(${x},${y},${z},${angle}deg)`,
+                        },
+                        record: {
+                            top: top,
+                            left: left,
+                            x: x,
+                            y: y,
+                            z: z,
+                            angle: angle
+                        }
+                    });
                 }
+                let vObj = this,
+                    interval = 20;
+                setInterval(function() {
+                    for (var i = 0; i < vObj.items.length; i++) {
+                        x = vObj.items[i].record.x;
+                        y = vObj.items[i].record.y;
+                        z = vObj.items[i].record.z;
+                        top = vObj.items[i].record.top;
+                        left = vObj.items[i].record.left;
+                        opacity = vObj.items[i].style.opacity;
+
+                        if (top <= -300) {
+                            top = window.screen.height;
+                            left = Math.random() * window.screen.width
+                        }
+                        top = top - (1 - opacity);
+                        angle = (vObj.items[i].record.angle + 360 * interval / (20000 * opacity)) % 360;
+                        vObj.items[i].style.top = top + "px";
+                        vObj.items[i].style.left = left + "px";
+                        vObj.items[i].style.transform = `rotate3d(${x},${y},${z},${angle}deg)`;
+                        vObj.items[i].record.x = x;
+                        vObj.items[i].record.y = y;
+                        vObj.items[i].record.z = z;
+                        vObj.items[i].record.angle = angle;
+                        vObj.items[i].record.top = top;
+                        vObj.items[i].record.left = left;
+                    }
+                }, interval);
+
             }
         })
-        //katex.render("c = \\pm\\sqrt{a^2 + b^2}",el);
     }
 
+
+    var showArrays = [{
+            type: "Latex",
+            array: [
+                "\\alpha ", "\\beta ", "\\gamma ", "\\delta ", "\\epsilon ", "\\varepsilon ", "\\zeta ", "\\eta ", "\\theta ", "\\vartheta ", "\\iota ", "\\kappa ", "\\lambda ", "\\mu ", "\\nu ", "\\xi ", "\\pi ", "\\varpi ", "\\rho ", "\\varrho ", "\\sigma ", "\\varsigma ", "\\tau ", "\\upsilon ", "\\phi ", "\\varphi ", "\\chi ", "\\psi ", "\\omega ", "\\Gamma ", "\\Delta ", "\\Theta ", "\\Lambda ", "\\Xi ", "\\Pi ", "\\Sigma ", "\\Upsilon ", "\\Phi ", "\\Psi ", "\\Omega "
+            ]
+        },
+        {
+            type: "Latex",
+            array: [
+                "e^{i\\pi}+1=0", //欧拉公式
+                "F=ma", //牛顿第二定律
+                "a^2+b^2=c^2", //勾股定理
+                "E_{0}=mc^{2}", //质能方程
+                "i\\hbar\\frac{\\partial }{\\partial t}\\Psi (r,t) = \\hat{H}\\Psi (r,t)", //薛定谔方程
+                //"1+1=2",
+                "\\begin{matrix} p=\\hbar k \\\\ E = \\hbar\\omega \\end{matrix} ", //德布罗意方程组
+                "\\hat{f}(\\xi )=\\int_{\\infty }^{\\infty }f(x)e{{_{}}^{-2\\pi i x\\xi }}dx", //傅里叶变换
+                "\\begin{matrix} \\oint_{S}D\\cdot dA = Q_{f,S} \\\\ \\oint_{S}B\\cdot dA = 0 \\\\ \\oint_{\\partial S}E\\cdot dl= -\\frac{\\partial \\Phi_{B,S}}{\\partial t} \\\\ \\oint_{\\partial S}H\\cdot dl= I_{f,S}+\\frac{\\partial \\Phi_{D,S}}{\\partial t} \\end{matrix}",
+                "c=2 \\pi r"
+            ]
+        },
+        {
+            type: "value",
+            array: [
+                "Java", "C", "C++", "Python", "C#", "JavaScript", "Visual Basic.NET", "R", "PHP", "MATLAB", "Swift",
+                "Objective-C", "Assembly language", "Perl", "Ruby", "Delphi/Object Pascal", "Go", "Scratch", "PL/SQL",
+                "Visual Basic",
+                "SAS", "D", "Dart", "ABAP", "COBOL", "Ada", "Lua", "Transact-SQL", "Fortran", "Scala", "Bash", "Lisp", "Prolog",
+                "LabVIEW", "Logo", "Hack", "Rust", "Apex", "Haskell", "Ladder Logic", "F#", "Scheme", "Kotlin", "Awk", "Erlang",
+                "MQL4", "Q", "RPG(OS/400)", "Groovy", "Alice"
+            ]
+        },
+        {
+            type: "value",
+            array: [
+                "计算机没什么用.他们只会告诉你答案.--巴勃罗·毕加索",
+                "计算机会不会思考这个问题就像问潜水艇会不会游泳一样.--Edsger W. Dijkstra",
+                "硬件:计算机系统中可被踢的部分--Jeff Pesis",
+                "我终于明白'向上兼容性'是怎么回事了.这是指我们得保留所有原有错误.--Dennie van Tassel",
+                "2038年1月19日,凌晨3点14分07秒",
+                "互联网?那个东西还在吗?--Homer Simpson",
+                "真正的创新经常来自于那些贴近市场、但无力拥有市场的的小型初创公司.--Timm Martin",
+                "这无关比特、字节和协议,而关乎利润和损益.--郭士纳",
+                "不管演示在彩排的时候有多好,一旦在观众面前展示时,演示不出错的几率与观众人数成反比,与投入的金钱总额成正比.--Mark Gibbs",
+                "控制复杂性是计算机编程的本质.--Brian Kernigan",
+                "进行软件设计有两种方式.一种是让它尽量简单,让人看不出明显的不足.另一种是弄得尽量复杂,让人看不出明显的缺陷.--C.A.R. Hoare",
+                "只有两个行业把客户称为'用户'.--Edward Tufte",
+                "你们当中很多人都知道程序员的美德.当然啦,有三种:那就是懒惰、急躁以及傲慢.--Larry Wall",
+                "程序员的问题是你无法预料他在做什么,直到为时已晚.--Seymour Cray",
+                "不像学学涂涂画画也能让某人成为专家级画家,计算机科学教育不会让任何人成为一名编程大师.--埃里克·雷蒙",
+                "最好的程序员跟好的程序员相比可不止好那么一点点.这种好不是一个数量级的,取决于标准怎么定:概念创造性、速度、设计的独创性或者解决问题的能力.--兰德尔·E·斯特劳斯",
+                "就算它工作不正常也别担心.如果一切正常,你早该失业了."
+            ]
+        }
+    ]
     </script>
 </body>
 
