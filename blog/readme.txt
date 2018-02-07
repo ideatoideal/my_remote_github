@@ -9,3 +9,5 @@ Font Awesome,一套绝佳的图标字体库和CSS框架
 https://mbd.baidu.com/newspage/data/landingsuper?context=%7B%22nid%22%3A%22news_9388858058658286052%22%7D&n_type=0&p_from=1
 
 http://www.ddooo.com/softdown/87863.htm
+
+css动效制作 http://bouncejs.com/
