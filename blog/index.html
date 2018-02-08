@@ -3,6 +3,7 @@
 
 <head>
     <title>测试</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!--         <script src="plugin/algebra-0.2.6.min.js"></script>
          -->
     <script src="plugin/vue.js"></script>
@@ -13,21 +14,23 @@
     <link rel="stylesheet" type="text/css" href="plugin/bootstrap-4.0.0/css/bootstrap.css">
     <script src="plugin/katex/katex.min.js"></script>
     <link rel="stylesheet" type="text/css" href="plugin/katex/katex.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
 
 <body style="overflow: hidden;margin: 0;">
-    <main style="position: absolute;width: 100%;height: 100%;">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="width: 100%;">
-            <!--       <a class="navbar-brand" href="#">Navbar</a>
+    <main :style="style" id="main">
+        <transition name="fade">
+            <div name="content" v-if="show" style="width: 100%;height: 100%;">
+                <nav class="navbar navbar-expand-lg navbar-light bg-light" style="width: 100%;">
+                    <!--       <a class="navbar-brand" href="#">Navbar</a>
             
        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>-->
-            <div class="collapse navbar-collapse" style="z-index:1;padding-right: 150px;">
-                <ul class="navbar-nav mr-auto">
-                    <!-- mr-auto -->
-                    <!-- <li class="nav-item active">
+                    <div class="collapse navbar-collapse" style="padding-right: 150px;">
+                        <ul class="navbar-nav mr-auto">
+                            <!-- mr-auto -->
+                            <!-- <li class="nav-item active">
             <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
@@ -47,38 +50,40 @@
           <li class="nav-item">
             <a class="nav-link disabled" href="#">Disabled</a>
           </li> -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Welcome to my paradise!</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">文章</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              更多
-            </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
-                    </li>
-                </ul>
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">&nbsp<span style="color:red;font-weight: 900;">V</span>elcome to my paradise!</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#"></a>
+                            </li>
+                            <li class="nav-item overCanvas">
+                                <a class="nav-link" href="#">文章</a>
+                            </li>
+                            <li class="nav-item dropdown overCanvas">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          更多
+                        </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </li>
+                        </ul>
+                        <form class="form-inline my-2 my-lg-0 overCanvas">
+                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        </form>
+                    </div>
+                </nav>
+                <div class="container-fluid overCanvas" style="height: 100%;background: #FF5722;">
+                </div>
             </div>
-        </nav>
-        <div class="container-fluid" style="height: 100%;background: "#FF5722";">
-        </div>
+        </transition>
     </main>
     <canvas id="ca" :style="style" :width="style.width" :height="style.height"></canvas>
-    <div :style="style" id="bg">
+    <div :style="style" id="bg" v-if="show">
         <div v-for="item in items" :style="item.style" v-html="item.html"></div>
     </div>
 </body>

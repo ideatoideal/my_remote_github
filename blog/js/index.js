@@ -1,11 +1,44 @@
-window.onload = function() {
-    initBg();
-    initCanvasBg();
-    
+Global={
+    vmain:null,
+    vbg:null,
+    getOpsition:function(){
+        return localStorage.getItem('vContainer.opsition')==null?"middle":localStorage.getItem('vContainer.opsition');
+    },
+    setOpsition:function(op){
+        localStorage.setItem('vContainer.opsition',op);
+    }
 }
 
-function iniNav(){
+window.onload = function() {
+    Global.vbg = initBg();
+    initCanvasBg();
+    Global.vmain = initMain();
+}
 
+function initMain(){
+    let vmain = new Vue({
+        el:"#main",
+        data:{
+            contentStyle:{
+                position:"absolute",width: "100%",height: "100%"
+            },
+            style:{
+                background: "rgba(255,255,255,0)",
+                position:"absolute",width: "100%",height: "100%"
+            },
+            show:false
+        },
+        mounted:function(){
+            if(Global.getOpsition()=="middle"){
+                    this.show = false;
+                    Global.vbg.show = true;
+                }else if(Global.getOpsition()=="leftTop"){
+                    this.show = true;
+                    Global.vbg.show = false;
+                }
+            }
+    })
+    return vmain;
 }
 
 //初始化数据背景
@@ -15,12 +48,13 @@ function initBg(){
         data: {
             style: {
                 position: "absolute",
-                width: window.screen.width + "px",
-                height: window.screen.height + "px",
+                width: `${window.screen.width}px`,
+                height: `${window.screen.height}px`,
                 overflow: "hidden",
-                perspective: window.screen.width + "px",
-                display: "none"
+                perspective: `${window.screen.width}px`,
+                z_index:-1
             },
+            show:true,
             items: []
         },
         mounted: function() {
@@ -88,8 +122,8 @@ function initBg(){
                     }
                     top = top - (1 - opacity);
                     angle = (vObj.items[i].record.angle + 360 * interval / (1200 * Math.min(slen + 3, 40))) % 360;
-                    vObj.items[i].style.top = top + "px";
-                    vObj.items[i].style.left = left + "px";
+                    vObj.items[i].style.top = `${top}px`;
+                    vObj.items[i].style.left = `${left}px`;
                     vObj.items[i].style.transform = `rotate3d(${x},${y},${z},${angle}deg)`;
                     vObj.items[i].record.x = x;
                     vObj.items[i].record.y = y;
@@ -147,35 +181,48 @@ function initCanvasBg(){
             stage.enableMouseOver(10);
             stage.addChild(vContainer).set({
                 name: "vContainer",
-                x: (window.innerWidth - vSize) / 2,
-                y: (window.innerHeight - vSize) / 2
             });
             //vContainer.cursor = "poiter";
-            let vTagArea = new createjs.Shape();
-            vTagArea.graphics.beginFill("#FFF").drawRect(0, 0, vSize, vSize);
+            let vTagArea = new createjs.Shape().set({alpha:0.01});
+            vTagArea.graphics.beginFill("#FFFFFF").drawRect(0, 0, vSize, vSize);
             vContainer.addChild(vTagArea)
             vContainer.addChild(vTag)
 
-            //vTag.x = (window.innerWidth-vSize)/2;
-            //vTag.y = (window.innerHeight-vSize)/2;
-            //点击弹出内容
-            //stage.addEventListener("click", function(){}, true);
 
-            //stage.addChild(vTag);
+            if(Global.getOpsition() == "leftTop"){
+                vContainer.x = -20;
+                vContainer.y = -20;
+            }else if(Global.getOpsition() == "middle"){
+                 vContainer.x = (window.innerWidth - vSize) / 2,
+                 vContainer.y = (window.innerHeight - vSize) / 2
+            }
 
             vContainer.addEventListener("click", function(event) {
-                console.log("click")
+                if(Global.getOpsition()=="middle"){
+                    Global.setOpsition('leftTop');
+                    createjs.Tween.get(vContainer).to({x:-20,y:-20},1000,createjs.Ease.bounceOut);
+                    Global.vmain.show = true;
+                    Global.vbg.show = false;
+                }else if(Global.getOpsition()=="leftTop"){
+                    Global.setOpsition('middle');
+                    createjs.Tween.get(vContainer)
+                    .to({ x: (window.innerWidth - vSize) / 2, y: (window.innerHeight - vSize) / 2, alpha: 0.7 }, 500, createjs.Ease.linear)
+                    .to({ alpha: 1 }, 300);
+                    Global.vmain.show = false;
+                    Global.vbg.show = true;
+                }
             });
             vContainer.addEventListener("mouseover", function(event) {
                 vContainer.cursor = "pointer";
-                createjs.Tween.get(vTag, { loop: true, bounce: true, reversed: true })
-                    .to({ rotation: -10 }, 100)
-                    .to({ rotation: 0 }, 100)
-                    .to({ rotation: 10 }, 100)
+                createjs.Tween.get(vTag, { loop: true })//, bounce: true, reversed: true
+                    .to({ rotation: -10 }, 50)
+                    .to({ rotation: 0 }, 50)
+                    .to({ rotation: 10 }, 50)
+                    .to({ rotation: 0 }, 50)
             });
             vContainer.addEventListener("mouseout", function(event) {
                 createjs.Tween.removeTweens(vTag)
-                createjs.Tween.get(vTag).to({ rotation: 0 }, 100)
+                createjs.Tween.get(vTag).to({ rotation: 0 }, 50)
             });
 
 
@@ -187,9 +234,11 @@ function initCanvasBg(){
                 redTag.graphics.clear().setStrokeStyle(30, 'round', 'round').beginStroke("#F00").moveTo(window.innerWidth - 150, -30).lineTo(window.innerWidth + 30, 150)
                 stage.addChild(redTag);
                 stage.update();
-                createjs.Tween.get(vContainer)
+                if(localStorage.getItem('vContainer.opsition')=="middle"){
+                    createjs.Tween.get(vContainer)
                     .to({ x: (window.innerWidth - vSize) / 2, y: (window.innerHeight - vSize) / 2, alpha: 0.7 }, 700, createjs.Ease.get(1))
                     .to({ alpha: 1 }, 300)
+                }
             }
             drawCanvas();
             window.onresize = drawCanvas;
