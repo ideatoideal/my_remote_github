@@ -1,11 +1,11 @@
-Global={
-    vmain:null,
-    vbg:null,
-    getOpsition:function(){
-        return localStorage.getItem('vContainer.opsition')==null?"middle":localStorage.getItem('vContainer.opsition');
+Global = {
+    vmain: null,
+    vbg: null,
+    getOpsition: function() {
+        return localStorage.getItem('vContainer.opsition') == null ? "middle" : localStorage.getItem('vContainer.opsition');
     },
-    setOpsition:function(op){
-        localStorage.setItem('vContainer.opsition',op);
+    setOpsition: function(op) {
+        localStorage.setItem('vContainer.opsition', op);
     }
 }
 
@@ -15,131 +15,146 @@ window.onload = function() {
     Global.vmain = initMain();
 }
 
-function initMain(){
+function initMain() {
     let vmain = new Vue({
-        el:"#main",
-        data:{
-            contentStyle:{
-                position:"absolute",width: "100%",height: "100%"
+        el: "#main",
+        data: {
+            contentStyle: {
+                position: "absolute",
+                width:  "100%",
+                height: "100%"
             },
-            style:{
+            style: {
                 background: "rgba(255,255,255,0)",
-                position:"absolute",width: "100%",height: "100%"
+                position: "absolute",
+                width: "100%",
+                height: "100%"
             },
-            show:false
+            show: false,
         },
-        mounted:function(){
-            if(Global.getOpsition()=="middle"){
-                    this.show = false;
-                    Global.vbg.show = true;
-                }else if(Global.getOpsition()=="leftTop"){
-                    this.show = true;
-                    Global.vbg.show = false;
-                }
+        mounted: function() {
+            if (Global.getOpsition() == "middle") {
+                this.show = false;
+                //Global.vbg.show = true;
+            } else if (Global.getOpsition() == "leftTop") {
+                this.show = true;
+                //Global.vbg.show = false;
             }
+        }
     })
     return vmain;
 }
 
 //初始化数据背景
-function initBg(){
+function initBg() {
     let vbg = new Vue({
         el: '#bg',
         data: {
             style: {
                 position: "absolute",
-                width: `${window.screen.width}px`,
+                width:  `${window.screen.width}px`,
                 height: `${window.screen.height}px`,
                 overflow: "hidden",
                 perspective: `${window.screen.width}px`,
-                z_index:-1
+                "z-index": -1
             },
-            show:true,
+            show: false,
             items: []
         },
         mounted: function() {
-            let apos = Math.floor(showArrays.length * Math.random())
-            let array = showArrays[apos].array,
-                type = showArrays[apos].type;
-            let len = Math.min(array.length, 20 + Math.ceil(Math.random() * 30));
-            let opacity, x, y, z, angle, top, left, fpos, html, fontSize, slen;
-            while (len--) {
-                opacity = Math.random();
-                x = Math.random();
-                y = Math.random();
-                z = Math.random();
-                angle = Math.random();
-                top = window.screen.height * Math.random();
-                left = window.screen.width * Math.random();
-                fpos = Math.floor(Math.random() * array.length);
-                //console.log(array[fpos])
-                if (type == "Latex") {
-                    html = katex.renderToString(array[fpos]);
-                } else {
-                    html = array[fpos];
-                }
-
-                fontSize = 25 * opacity + 75 / array[fpos].length;
-                slen = array[fpos].length
-                array.splice(fpos, 1);
-                this.items.push({
-                    html: html,
-                    style: {
-                        position: "absolute",
-                        top: top + "px",
-                        left: left + "px",
-                        opacity: opacity,
-                        fontSize: fontSize + "px",
-                        transform: `rotate3d(${x},${y},${z},${angle}deg)`,
-                    },
-                    record: {
-                        top: top,
-                        left: left,
-                        x: x,
-                        y: y,
-                        z: z,
-                        angle: angle,
-                        slen: slen
-                    }
-                });
+            this.moveBg();
+            if (Global.getOpsition() == "middle") {
+                this.show = true;
+            } else if (Global.getOpsition() == "leftTop") {
+                this.show = false;
             }
-            let vObj = this,
-                interval = 20;
-            setInterval(function() {
-                for (var i = 0; i < vObj.items.length; i++) {
-                    x = vObj.items[i].record.x;
-                    y = vObj.items[i].record.y;
-                    z = vObj.items[i].record.z;
-                    top = vObj.items[i].record.top;
-                    left = vObj.items[i].record.left;
-                    slen = vObj.items[i].record.slen;
-
-                    opacity = vObj.items[i].style.opacity;
-
-                    if (top <= -300) {
-                        top = window.screen.height;
-                        left = Math.random() * window.screen.width
+        },
+        methods: {
+            moveBg: function() {
+                let apos = Math.floor(showArrays.length * Math.random())
+                let array = showArrays[apos].array,
+                    type = showArrays[apos].type;
+                let len = Math.min(array.length, 20 + Math.ceil(Math.random() * 30));
+                let opacity, x, y, z, angle, top, left, fpos, html, fontSize, slen;
+                while (len--) {
+                    opacity = Math.random();
+                    x = Math.random();
+                    y = Math.random();
+                    z = Math.random();
+                    angle = Math.random();
+                    top = window.screen.height * Math.random();
+                    left = window.screen.width * Math.random();
+                    fpos = Math.floor(Math.random() * array.length);
+                    //console.log(array[fpos])
+                    if (type == "Latex") {
+                        html = katex.renderToString(array[fpos]);
+                    } else {
+                        html = array[fpos];
                     }
-                    top = top - (1 - opacity);
-                    angle = (vObj.items[i].record.angle + 360 * interval / (1200 * Math.min(slen + 3, 40))) % 360;
-                    vObj.items[i].style.top = `${top}px`;
-                    vObj.items[i].style.left = `${left}px`;
-                    vObj.items[i].style.transform = `rotate3d(${x},${y},${z},${angle}deg)`;
-                    vObj.items[i].record.x = x;
-                    vObj.items[i].record.y = y;
-                    vObj.items[i].record.z = z;
-                    vObj.items[i].record.angle = angle;
-                    vObj.items[i].record.top = top;
-                    vObj.items[i].record.left = left;
-                }
-            }, interval);
 
+                    fontSize = 25 * opacity + 75 / array[fpos].length;
+                    slen = array[fpos].length
+                    array.splice(fpos, 1);
+                    this.items.push({
+                        html: html,
+                        style: {
+                            position: "absolute",
+                            top: top + "px",
+                            left: left + "px",
+                            opacity: opacity,
+                            fontSize: fontSize + "px",
+                            transform: `rotate3d(${x},${y},${z},${angle}deg)`,
+                        },
+                        record: {
+                            top: top,
+                            left: left,
+                            x: x,
+                            y: y,
+                            z: z,
+                            angle: angle,
+                            slen: slen
+                        }
+                    });
+                }
+                let vObj = this,
+                    interval = 20;
+                setInterval(function() {
+                    if (!vObj.show) return;
+                    for (var i = 0; i < vObj.items.length; i++) {
+                        x = vObj.items[i].record.x;
+                        y = vObj.items[i].record.y;
+                        z = vObj.items[i].record.z;
+                        top = vObj.items[i].record.top;
+                        left = vObj.items[i].record.left;
+                        slen = vObj.items[i].record.slen;
+
+                        opacity = vObj.items[i].style.opacity;
+
+                        if (top <= -300) {
+                            top = window.screen.height;
+                            left = Math.random() * window.screen.width
+                        }
+                        top = top - (1 - opacity);
+                        angle = (vObj.items[i].record.angle + 360 * interval / (1200 * Math.min(slen + 3, 40))) % 360;
+                        vObj.items[i].style.top = `${top}px`;
+                        vObj.items[i].style.left = `${left}px`;
+                        vObj.items[i].style.transform = `rotate3d(${x},${y},${z},${angle}deg)`;
+                        vObj.items[i].record.x = x;
+                        vObj.items[i].record.y = y;
+                        vObj.items[i].record.z = z;
+                        vObj.items[i].record.angle = angle;
+                        vObj.items[i].record.top = top;
+                        vObj.items[i].record.left = left;
+                    }
+                }, interval);
+            }
         }
     })
+    return vbg;
 }
 
 //初始化canvas背景
-function initCanvasBg(){
+function initCanvasBg() {
     let vca = new Vue({
         el: "#ca",
         data: {
@@ -149,99 +164,113 @@ function initCanvasBg(){
                 redTag: null,
                 vTag: null,
                 vContainer: null,
+                vSize: 80
             },
             style: {
                 background: "rgba(255,255,255,0)",
                 width: window.screen.width,
                 height: window.screen.height,
-                position:"absolute"
+                position: "absolute"
+
             }
         },
         mounted: function() {
-            //createjs.CSSPlugin.install();
-            let obj = this,
-                vSize = 80;
-            this.easel.canvas = obj.$el;
-            this.easel.stage = new createjs.Stage(obj.$el);
-            this.easel.redTag = new createjs.Shape();
-            this.easel.vTag = new createjs.Text("v", vSize + "px Times ", "#F00").set({
-                textAlign: "center",
-                textBaseline: "middle",
-                x: vSize / 2,
-                y: vSize / 2
-            })
-            this.easel.vContainer = new createjs.Container();
+            this.initStage();
+            this.initTag();
+            this.initRibbon();
 
-            //简写
-            let redTag = obj.easel.redTag;
-            let stage = obj.easel.stage;
-            let vTag = obj.easel.vTag;
-            let vContainer = obj.easel.vContainer;
+        },
+        methods: {
+            initStage: function() {
+                this.easel.canvas = this.$el;
+                this.easel.stage = new createjs.Stage(this.$el);
+            },
+            initTag: function() {
 
-            stage.enableMouseOver(10);
-            stage.addChild(vContainer).set({
-                name: "vContainer",
-            });
-            //vContainer.cursor = "poiter";
-            let vTagArea = new createjs.Shape().set({alpha:0.01});
-            vTagArea.graphics.beginFill("#FFFFFF").drawRect(0, 0, vSize, vSize);
-            vContainer.addChild(vTagArea)
-            vContainer.addChild(vTag)
+                let vSize = this.easel.vSize;
+                let stage = this.easel.stage;
+                let vTag = this.easel.vTag = new createjs.Text("v", vSize + "px Times ", "#F00").set({
+                    textAlign: "center",
+                    textBaseline: "middle",
+                    x: vSize / 2,
+                    y: vSize / 2
+                })
+                let vContainer = this.easel.vContainer = new createjs.Container();
 
 
-            if(Global.getOpsition() == "leftTop"){
-                vContainer.x = -20;
-                vContainer.y = -20;
-            }else if(Global.getOpsition() == "middle"){
-                 vContainer.x = (window.innerWidth - vSize) / 2,
-                 vContainer.y = (window.innerHeight - vSize) / 2
-            }
 
-            vContainer.addEventListener("click", function(event) {
-                if(Global.getOpsition()=="middle"){
-                    Global.setOpsition('leftTop');
-                    createjs.Tween.get(vContainer).to({x:-20,y:-20},1000,createjs.Ease.bounceOut);
-                    Global.vmain.show = true;
-                    Global.vbg.show = false;
-                }else if(Global.getOpsition()=="leftTop"){
-                    Global.setOpsition('middle');
-                    createjs.Tween.get(vContainer)
-                    .to({ x: (window.innerWidth - vSize) / 2, y: (window.innerHeight - vSize) / 2, alpha: 0.7 }, 500, createjs.Ease.linear)
-                    .to({ alpha: 1 }, 300);
-                    Global.vmain.show = false;
-                    Global.vbg.show = true;
+
+                stage.enableMouseOver(10);
+                stage.addChild(vContainer).set({
+                    name: "vContainer",
+                });
+                //vContainer.cursor = "poiter";
+                let vTagArea = new createjs.Shape().set({ alpha: 0.01 });
+                vTagArea.graphics.beginFill("#FFFFFF").drawRect(0, 0, vSize, vSize);
+                vContainer.addChild(vTagArea)
+                vContainer.addChild(vTag)
+
+
+                if (Global.getOpsition() == "leftTop") {
+                    vContainer.x = -20;
+                    vContainer.y = -20;
+                } else if (Global.getOpsition() == "middle") {
+                    vContainer.x = (window.innerWidth - vSize) / 2,
+                        vContainer.y = (window.innerHeight - vSize) / 2
                 }
-            });
-            vContainer.addEventListener("mouseover", function(event) {
-                vContainer.cursor = "pointer";
-                createjs.Tween.get(vTag, { loop: true })//, bounce: true, reversed: true
-                    .to({ rotation: -10 }, 50)
-                    .to({ rotation: 0 }, 50)
-                    .to({ rotation: 10 }, 50)
-                    .to({ rotation: 0 }, 50)
-            });
-            vContainer.addEventListener("mouseout", function(event) {
-                createjs.Tween.removeTweens(vTag)
-                createjs.Tween.get(vTag).to({ rotation: 0 }, 50)
-            });
+
+                vContainer.addEventListener("click", function(event) {
+                    if (Global.getOpsition() == "middle") {
+                        Global.setOpsition('leftTop');
+                        createjs.Tween.get(vContainer).to({ x: -20, y: -20 }, 1000, createjs.Ease.bounceOut);
+                        Global.vmain.show = true;
+                        Global.vbg.show = false;
+                    } else if (Global.getOpsition() == "leftTop") {
+                        Global.setOpsition('middle');
+                        createjs.Tween.get(vContainer)
+                            .to({ x: (window.innerWidth - vSize) / 2, y: (window.innerHeight - vSize) / 2, alpha: 0.7 }, 400, createjs.Ease.Linear)
+                            .to({ alpha: 1 }, 300);
+                        Global.vmain.show = false;
+                        Global.vbg.show = true;
+                    }
+                });
+                vContainer.addEventListener("mouseover", function(event) {
+                    vContainer.cursor = "pointer";
+                    createjs.Tween.get(vTag, { loop: true }) //, bounce: true, reversed: true
+                        .to({ rotation: -10 }, 10)
+                        .to({ rotation: 0 }, 10)
+                        .to({ rotation: 10 }, 10)
+                        .to({ rotation: 0 }, 10)
+                });
+                vContainer.addEventListener("mouseout", function(event) {
+                    createjs.Tween.removeTweens(vTag)
+                    createjs.Tween.get(vTag).to({ rotation: 0 }, 10)
+                });
 
 
 
-            createjs.Ticker.framerate = 20;
-            createjs.Ticker.addEventListener("tick", stage);
+                createjs.Ticker.framerate = 20;
+                createjs.Ticker.addEventListener("tick", stage);
+            },
+            initRibbon: function() {
+                let vSize = this.easel.vSize;
+                let vContainer = this.easel.vContainer;
+                let stage = this.easel.stage;
+                let redTag = this.easel.redTag = new createjs.Shape();
 
-            function drawCanvas() {
-                redTag.graphics.clear().setStrokeStyle(30, 'round', 'round').beginStroke("#F00").moveTo(window.innerWidth - 150, -30).lineTo(window.innerWidth + 30, 150)
-                stage.addChild(redTag);
-                stage.update();
-                if(localStorage.getItem('vContainer.opsition')=="middle"){
-                    createjs.Tween.get(vContainer)
-                    .to({ x: (window.innerWidth - vSize) / 2, y: (window.innerHeight - vSize) / 2, alpha: 0.7 }, 700, createjs.Ease.get(1))
-                    .to({ alpha: 1 }, 300)
+                function drawCanvas() {
+                    redTag.graphics.clear().setStrokeStyle(30, 'round', 'round').beginStroke("#F00").moveTo(window.innerWidth - 150, -30).lineTo(window.innerWidth + 30, 150)
+                    stage.addChild(redTag);
+                    stage.update();
+                    if (Global.getOpsition() == "middle") {
+                        createjs.Tween.get(vContainer)
+                            .to({ x: (window.innerWidth - vSize) / 2, y: (window.innerHeight - vSize) / 2, alpha: 0.7 }, 700, createjs.Ease.get(1))
+                            .to({ alpha: 1 }, 300)
+                    }
                 }
+                drawCanvas();
+                window.onresize = drawCanvas;
             }
-            drawCanvas();
-            window.onresize = drawCanvas;
         }
     })
 }
