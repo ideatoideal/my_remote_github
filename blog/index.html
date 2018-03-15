@@ -3,17 +3,28 @@
 
 <head>
     <title>测试</title>
+    <!-- 防止移动端变形之类的 不过我没做移动端 顺便写上而已 -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!--         <script src="plugin/algebra-0.2.6.min.js"></script>
-         -->
+    <!-- 代数处理 暂时用不上
+    <script src="plugin/algebra-0.2.6.min.js"></script>
+     -->
+     <!-- vue js模板-->
     <script src="plugin/vue.js"></script>
+    <!-- createjs动画库 -->
     <script src="plugin/easeljs.js"></script>
     <script src="plugin/tweenjs.js"></script>
+    <!-- jquery不用介绍了吧 -->
     <script type="text/javascript" src="plugin/jquery-3.3.1.js"></script>
+    <!-- bootstrap样式 -->
     <script src="plugin/bootstrap-4.0.0/js/bootstrap.js"></script>
     <link rel="stylesheet" type="text/css" href="plugin/bootstrap-4.0.0/css/bootstrap.css">
+    <!-- 数学latex表达式解释 -->
     <script src="plugin/katex/katex.min.js"></script>
     <link rel="stylesheet" type="text/css" href="plugin/katex/katex.min.css">
+    <!-- 自定义插件 -->
+    <!-- 点击菜单 内容滑动 -->
+    <script type="text/javascript" href="plugin/jquery.frendy.smooth-scroll.js"></script>>
+    <!-- 自定义部分-->
     <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
 
@@ -54,43 +65,41 @@
                 </header>
                 <div style="width:100%;height: 100%;background: white;display: block;padding-top: 56px;">
                     <div style="position:absolute;width:100%;height: 100%;background: white;display: block;padding-left: 0px;display: block;">
-                        <div class="bd-example overCanvas" style="position: absolute;overflow: auto;">
+                        <div class="bd-example overCanvas" style="width: 30%;position: absolute; height: 100%:">
                           <div class="row" style="height: auto;">
                             <div class="col-2">
-                              <nav id="navbar-example3" class="navbar navbar-light bg-light flex-column">
-                                <a class="navbar-brand" href="#">Navbar</a>
+                              <nav data-catalog="navbar-example3" class="navbar navbar-light bg-light flex-column">
+                                <a class="navbar-brand" data-catalog-el="#">Navbar</a>
                                 <nav class="nav nav-pills flex-column">
-                                  <a class="nav-link active" href="#item-1">Item 1</a>
+                                  <a class="nav-link active" data-catalog-el="item-1">Item 1</a>
                                   <nav class="nav nav-pills flex-column">
-                                    <a class="nav-link ml-3 my-1 active" href="#item-1-1">Item 1-1</a>
-                                    <a class="nav-link ml-3 my-1" href="#item-1-2">Item 1-2</a>
+                                    <a class="nav-link ml-3 my-1 active" data-catalog-el="item-1-1" >Item 1-1</a>
+                                    <a class="nav-link ml-3 my-1" data-catalog-el="item-1-2">Item 1-2</a>
                                   </nav>
-                                  <a class="nav-link" href="#item-2">Item 2</a>
-                                  <a class="nav-link" href="#item-3">Item 3</a>
+                                  <a class="nav-link" data-catalog-el="#item-2">Item 2</a>
+                                  <a class="nav-link" data-catalog-el="item-3">Item 3</a>
                                   <nav class="nav nav-pills flex-column">
-                                    <a class="nav-link ml-3 my-1" href="#item-3-1">Item 3-1</a>
-                                    <a class="nav-link ml-3 my-1" href="#item-3-2">Item 3-2</a>
+                                    <a class="nav-link ml-3 my-1" data-catalog-el="item-3-1">Item 3-1</a>
+                                    <a class="nav-link ml-3 my-1" data-catalog-el="item-3-2">Item 3-2</a>
                                   </nav>
                                 </nav>
                               </nav>
                             </div>
-                            <div class="col-8">
-                              <div data-spy="scroll" data-target="#navbar-example3" data-offset="0" class="scrollspy-example-2">
-                                <h4 id="item-1">Item 1</h4>
+                            <div class="col-8" style="width: 60%;margin-left:30%;position: absolute; height: 300px;overflow: auto;margin-top: 100px;">
+                                <h4 data-content-el="item-1">Item 1</h4>
                                 <p>Ex consequat commodo adipisicing exercitation aute excepteur occaecat ullamco duis aliqua id magna ullamco eu. Do aute ipsum ipsum ullamco cillum consectetur ut et aute consectetur labore. Fugiat laborum incididunt tempor eu consequat enim dolore proident. Qui laborum do non excepteur nulla magna eiusmod consectetur in. Aliqua et aliqua officia quis et incididunt voluptate non anim reprehenderit adipisicing dolore ut consequat deserunt mollit dolore. Aliquip nulla enim veniam non fugiat id cupidatat nulla elit cupidatat commodo velit ut eiusmod cupidatat elit dolore.</p>
-                                <h5 id="item-1-1">Item 1-1</h5>
+                                <h5 data-content-el="item-1-1">Item 1-1</h5>
                                 <p>Amet tempor mollit aliquip pariatur excepteur commodo do ea cillum commodo Lorem et occaecat elit qui et. Aliquip labore ex ex esse voluptate occaecat Lorem ullamco deserunt. Aliqua cillum excepteur irure consequat id quis ea. Sit proident ullamco aute magna pariatur nostrud labore. Reprehenderit aliqua commodo eiusmod aliquip est do duis amet proident magna consectetur consequat eu commodo fugiat non quis. Enim aliquip exercitation ullamco adipisicing voluptate excepteur minim exercitation minim minim commodo adipisicing exercitation officia nisi adipisicing. Anim id duis qui consequat labore adipisicing sint dolor elit cillum anim et fugiat.</p>
-                                <h5 id="item-1-2">Item 2-2</h5>
+                                <h5 data-content-el="item-1-2">Item 2-2</h5>
                                 <p>Cillum nisi deserunt magna eiusmod qui eiusmod velit voluptate pariatur laborum sunt enim. Irure laboris mollit consequat incididunt sint et culpa culpa incididunt adipisicing magna magna occaecat. Nulla ipsum cillum eiusmod sint elit excepteur ea labore enim consectetur in labore anim. Proident ullamco ipsum esse elit ut Lorem eiusmod dolor et eiusmod. Anim occaecat nulla in non consequat eiusmod velit incididunt.</p>
-                                <h4 id="item-2">Item 2</h4>
+                                <h4 data-content-el="item-2">Item 2</h4>
                                 <p>Quis magna Lorem anim amet ipsum do mollit sit cillum voluptate ex nulla tempor. Laborum consequat non elit enim exercitation cillum aliqua consequat id aliqua. Esse ex consectetur mollit voluptate est in duis laboris ad sit ipsum anim Lorem. Incididunt veniam velit elit elit veniam Lorem aliqua quis ullamco deserunt sit enim elit aliqua esse irure. Laborum nisi sit est tempor laborum mollit labore officia laborum excepteur commodo non commodo dolor excepteur commodo. Ipsum fugiat ex est consectetur ipsum commodo tempor sunt in proident.</p>
-                                <h4 id="item-3">Item 3</h4>
+                                <h4 data-content-el="item-3">Item 3</h4>
                                 <p>Quis anim sit do amet fugiat dolor velit sit ea ea do reprehenderit culpa duis. Nostrud aliqua ipsum fugiat minim proident occaecat excepteur aliquip culpa aute tempor reprehenderit. Deserunt tempor mollit elit ex pariatur dolore velit fugiat mollit culpa irure ullamco est ex ullamco excepteur.</p>
-                                <h5 id="item-3-1">Item 3-1</h5>
+                                <h5 data-content-el="item-3-1">Item 3-1</h5>
                                 <p>Deserunt quis elit Lorem eiusmod amet enim enim amet minim Lorem proident nostrud. Ea id dolore anim exercitation aute fugiat labore voluptate cillum do laboris labore. Ex velit exercitation nisi enim labore reprehenderit labore nostrud ut ut. Esse officia sunt duis aliquip ullamco tempor eiusmod deserunt irure nostrud irure. Ullamco proident veniam laboris ea consectetur magna sunt ex exercitation aliquip minim enim culpa occaecat exercitation. Est tempor excepteur aliquip laborum consequat do deserunt laborum esse eiusmod irure proident ipsum esse qui.</p>
-                                <h5 id="item-3-2">Item 3-2</h5>
+                                <h5 data-content-el="item-3-2">Item 3-2</h5>
                                 <p>Labore sit culpa commodo elit adipisicing sit aliquip elit proident voluptate minim mollit nostrud aute reprehenderit do. Mollit excepteur eu Lorem ipsum anim commodo sint labore Lorem in exercitation velit incididunt. Occaecat consectetur nisi in occaecat proident minim enim sunt reprehenderit exercitation cupidatat et do officia. Aliquip consequat ad labore labore mollit ut amet. Sit pariatur tempor proident in veniam culpa aliqua excepteur elit magna fugiat eiusmod amet officia.</p>
-                              </div>
                             </div>
                           </div>
                         </div>
