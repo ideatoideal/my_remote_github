@@ -1,0 +1,157 @@
+thinking in java
+
+6 类再生 --代码复用
+合成 and 继承
+6.1 合成(uml组合关系) 
+*非基本类型字符输出默认调用toString()方法
+6.2 继承
+*类中写main方法调试,调试后可不删除
+衍生类生成时会创建基类子对象并包含
+用super()传参调用父类的构造器
+6.3 合成与继承的结合
+若需要清除,自己实现清除方法
+6.4 合成与继承的选择 --根据是否想引入现有类接口来决定
+6.6 累积开发(继承)
+6.7 上溯造型 --是否需要上溯造型也是合成与继承的选择条件之一
+6.8 final关键字 --这个东西不能变,基本类型为常数,句柄则为不能指向其它对象且要初始化一个对象(再定义处或构造器里)
+final自变量 ,final方法(上锁或提高性能--嵌入调用),final类
+6.9 初始化和类装载
+*static加载顺序和时间,每个对象代码在独立文件
+继承初始化整个顺序过程 static(父,子) -> 设置基本类型,调用构造器 (父,子)
+*优先合成再继承,考虑上溯造型
+
+
+7 多形性 --节省代码 扩展性
+7.1 上溯造型
+7.2 深入理解
+Binding方法调用的绑定,早期,后期绑定 final可关闭动态绑定
+多形性是由于后期绑定
+7.3 覆盖与过载
+7.4抽象类和方法 (抽象类避免编译器误以为过载)
+*可以只抽象部分房啊
+7.5 接口 (抽象概念更深一层,想象纯"抽象类")
+*方法默认为public ,常量默认final static
+多重继承,合并接口 可以.. extends 具体类 implements a,b,c
+*假如创建的基础类没有成员变量或方法定义 优先接口(可用常量)
+继承扩展接口
+7.6 内部类
+内部类和上溯造型 (只暴露接口,代码,防止直接new内部类,目的只返回一个基础类句柄)
+方法和作用域中的内部类
+匿名内部类 及其构造器(没有名字,不能过载)
+链接到外部类 
+static内部类 
+*内部类默认持有封装它那个类的句柄,但如果static则不具有外部类的句柄
+继承内部类 --需要特殊语法建立关联
+内部类覆盖
+内部类标识符(例如 WithInner$Inner.class中的$)
+使用内部类原因:控制框架
+
+
+
+11.容器
+Collection
+	List
+		ArrayList
+		LinkedList
+	Set
+		HashSet
+		TreeSet
+		LinkedHashSet
+	Queue
+	PriorityQueue
+Map
+	HashMap
+	TreeMap
+	LinkedHashMap
+Stack
+
+Interator 迭代器
+ListIterator
+
+for each语法
+
+
+12.通过异常处理
+throw new NullPointerException();
+try{} catch(){} catch(){}
+自定义异常 extends Exception
+标准错误流 e.printStackTrace() 
+记录日志 Logger
+异常说明 定义throws就要写处理方法,不想写可以预先添加throws在方法上
+捕获所有异常 Exception
+栈轨迹 printStackTrace()
+重新抛出异常 catch(..){ throws ..} 1.抛出刚捕获的异常 2.在刚捕获异常处抛出新异常
+finally
+
+
+
+
+
+
+
+
+
+关闭代理
+http://www.360doc.com/content/15/1208/18/7863900_518804563.shtml
+把 HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections 里面的都删掉
+
+
+https://hq.sinajs.cn/list=sh601001,sh600919
+
+
+
+
+mysql -u root -p p)hcreIE=4tk
+ALTER USER root IDENTIFIED BY '199104';
+SET PASSWORD FOR root = '123456'
+
+
+SET PASSWORD FOR root = '123456'
+
+
+SET PASSWORD = PASSWORD('199104');
+
+ALTER USER 'root'@'localhost' PASSWORD EXPIRE NEVER;
+
+flush privileges;
+
+create user 'test'@'%' identified by '199104';
+
+
+grant all privileges on `testdb`.* to 'test'@'%' identified by '199104';  
+
+
+
+select * from mysql.user where User = 'test' and Host = '127.0.0.1' order by User,Host
+
+grant all privileges on *.* to test@'%' identified by "199104";
+
+
+
+1
+2,4,5,6 关联
+3,8 范围
+9 条件
+
+7,10 最后
+
+矛盾
+2A 3C 4C 5C 6C 8C 9C 10C
+1 B,D 
+
+7可能C
+
+2B 5D 7D
+
+若1=6
+9C 6D 10D 9D 矛盾
+
+若1!=6 6非B
+假设1 9D  6,10非D{
+	假设6A 4B 7B 8B(矛盾)
+	假设6C 3=8=10
+}   
+假设2 9A 6D  2,9,10非D 1非D 4B 5B 8B 9B 矛盾
+假设3 9B 10D 2,6,9非D 
+
+
