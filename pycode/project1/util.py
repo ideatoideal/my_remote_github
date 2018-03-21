@@ -1,12 +1,14 @@
 import time
 import calendar
 
-def execute(conn,sql):
+
+def execute(conn, sql):
     cursor = conn.cursor()
     cursor.execute(sql)
     result = cursor.fetchall()
     cursor.close()
     return result
+
 
 def insert(conn, table_name, dict):
     cursor = conn.cursor()
@@ -14,7 +16,7 @@ def insert(conn, table_name, dict):
     values = []
     for key in dict.keys():
         columns.append(key)
-        values.append("'"+dict[key]+"'")
+        values.append("'" + dict[key] + "'")
     columns = ",".join(columns)
     values = ",".join(values)
     sql = "insert ignore into " + table_name + "(" + columns + ") values (" + values + ")"
@@ -66,7 +68,6 @@ def get_object(conn, sql):
     cursor.close()
     for r in ret:
         return r[0]
-
 
 
 def transform_type(str):

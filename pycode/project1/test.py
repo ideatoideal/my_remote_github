@@ -26,13 +26,16 @@ cursor = conn.cursor()
 
 #share_data = tushare.get_h_data('000001', start='2018-02-27', index=True)
 #print(share_data)
-business.get_share(conn,"000001","qfq")
+
+list = [1,2,3,4,5,6,7,8,9,10]
+ma_list = business.ma(list,5)
+print(ma_list)
 
 """
 code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log)")
 for row in code_list:
     code = row[0]
-    time.sleep(60)
+    business.get_share(conn, code, "hfq")
 """
 
 
