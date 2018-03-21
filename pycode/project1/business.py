@@ -75,12 +75,12 @@ def save_share(conn, code, autype):
 def get_share(conn, code, autype):
     save_share(conn, code, autype)
     result = util.execute(conn, "select * from hfq_share where code = " + code)
-    print(result)
+    #print(result)
 
 
 def init_update_log(conn):
     cursor = conn.cursor()
-    if not util.is_table_exist(table_name="update_log"):
+    if not util.is_table_exist(conn,table_name="update_log"):
         sql = "CREATE TABLE `update_log` (\
                   `code` varchar(6) DEFAULT NULL,\
                   `begin_date` datetime DEFAULT NULL,\
