@@ -36,3 +36,37 @@ Array.prototype.getLine = function (lineNo) {
     }
     return re;
 }
+// 如 list.getLinse("3,1-4,5") 返回3,1,2,3,4,5列
+Array.prototype.getLines = function (str) {
+    let re = [];
+    let strs = str.split(",");
+    let tmp = [], range;
+    for (let i = 0; i < strs.length; i++) {
+        if (strs[i].indexOf("-") > 0) {
+            range = strs[i].split("-");
+            for (let j = parseInt(range[0]); j <= parseInt(range[1]); j++) {
+                tmp.push(j)
+            }
+        } else {
+            tmp.push(parseInt(strs[i]))
+        }
+    }
+    let row = []
+    for (let i = 0; i < this.length; i++) {
+        row = []
+        for (let j = 0; j < tmp.length; j++) {
+            row.push(this[i][tmp[j]])
+        }
+        re.push(row)
+    }
+    return re;
+}
+
+Array.prototype.toFixed = function (x) {
+    let re = [];
+    for (let i = 0; i < this.length; i++) {
+        if(this[i]==null) re.push(null)
+        else re.push(this[i].toFixed(x))
+    }
+    return re
+}

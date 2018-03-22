@@ -40,23 +40,23 @@ print(share_data)
 """
 
 
-"""
-code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log) order by code")
-#code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log) order by code desc")
+
+#code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log) order by code")
+code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log) order by code desc")
 for row in code_list:
     code = row[0]
-    if int(code) <= 18:
+    if int(code) >= 603598:
         continue
-    for i in range(3):
+    for i in range(1):
         try:
             business.get_share(conn, code, "hfq")
         except Exception:
             print("!!!警告:下载"+code+"发生异常");
-            print("开始睡眠"+str(60+30*i)+"s")
-            time.sleep(60+30*i)
-            print("重新下载"+code+",第"+str(i+1)+"次")
+            #print("开始睡眠"+str(60+30*i)+"s")
+            #time.sleep(60+30*i)
+            #print("重新下载"+code+",第"+str(i+1)+"次")
 
-"""
+
 
 
 # share_data = tushare.get_k_data('000001', start='2011-02-27', index=True,)
