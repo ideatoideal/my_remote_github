@@ -2,6 +2,18 @@ import util
 import time
 import tushare
 import share_tool
+import pymysql
+
+
+
+def get_connection():
+    conn = pymysql.connect("localhost", "test", "199104", "testdb", use_unicode=True,
+                                 charset="utf8")  # 默认utf-8 不然插入可能会出错
+    return conn
+
+
+def close_connection(conn):
+    conn.close()
 
 
 def get_time_to_market(conn, code):
@@ -75,12 +87,17 @@ def save_share(conn, code, autype):
 def get_share(conn, code, autype):
     save_share(conn, code, autype)
     result = util.execute(conn, "select * from hfq_share where code = " + code)
-    #print(result)
+    # print(result)
+
+
+def get_hfq_share(conn, code):
+    result = util.execute(conn, "select DATE_FORMAT(date,'%Y-%m-%d'),open,high,close,low,volume,amount,code  from tmp_hfq_share where code = '" + code+"'")
+    return result
 
 
 def init_update_log(conn):
     cursor = conn.cursor()
-    if not util.is_table_exist(conn,table_name="update_log"):
+    if not util.is_table_exist(conn, table_name="update_log"):
         sql = "CREATE TABLE `update_log` (\
                   `code` varchar(6) DEFAULT NULL,\
                   `begin_date` datetime DEFAULT NULL,\
@@ -97,7 +114,7 @@ def ma(list, x):
     tmp = [0] * len(list)
     for i in range(x):
         for j in range(len(tmp)):
-            if j - i >= 0 :
+            if j - i >= 0:
                 tmp[j] = tmp[j] + list[j - i]
     for i in range(len(tmp)):
         if i < x - 1:

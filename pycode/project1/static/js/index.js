@@ -1,6 +1,4 @@
 $(document).ready(function () {
-    po
-
     //开 低 收 高
 
     var myChart = echarts.init(document.getElementById('main'));
