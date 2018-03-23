@@ -1,5 +1,5 @@
 $(document).ready(function () {
-
+    initPlugin()
     post("get_hfq_share", {code: '000001'}, function (data) {
         //date,open,high,close,low,volume,amount,code
         result = data.result
@@ -38,7 +38,7 @@ $(document).ready(function () {
                 type: 'value',
             },
             legend: {
-                data:legend
+                data: legend
             },
             series: [
                 {
@@ -46,7 +46,7 @@ $(document).ready(function () {
                     data: close,
                     type: 'line',
                     smooth: true
-                },
+                }/*,
                 {
                     name: legend[1],
                     data: boll[0],
@@ -64,12 +64,59 @@ $(document).ready(function () {
                     data: boll[2],
                     type: 'line',
                     smooth: true
-                }
+                }*/
             ]
         };
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
     })
-
-
 })
+
+function initPlugin() {
+    //$('#search').select2()
+    //初始搜索
+    post("get_search", {}, function (data) {
+        let subjects = data.result;
+        $("#search").initOption(subjects, true)
+        $('#search').select2({
+            minimumResultsForSearch: Infinity,
+            matcher: function (params, data) {
+                let text = data.text
+                if ($.trim(params.term) === '') {
+                    return data;
+                }
+                if (text.indexOf(params.term) > -1) {
+                    return data
+                }
+                text = text.replace("行","H")//常见多音字处理
+                if (text.toPinYin().toUpperCase().indexOf(params.term.toUpperCase()) > -1) {
+                    return data
+                }
+                return null
+            }
+        })
+        /*$('#search').select2({
+            matcher: function (params, data) {
+                if ($.trim(params.term) === '') {
+                    return null;
+                }
+                if (data.text.indexOf(params.term) > -1) {
+                    return data
+                }
+                if (data.text.toPinYin().toUpperCase().indexOf(params.term.toUpperCase()) > -1) {
+                    return data
+                }
+                return null
+            }
+        })*/
+    })
+}
+
+/**
+*
+RSV:=(CLOSE-LLV(LOW,9))/(HHV(HIGH,9)-LLV(LOW,9))*100;
+K:=SMA(RSV,3,1);
+D:=SMA(K,3,1);
+J:=3*K-2*D;
+REF(J,1)<REF(J,2) AND J>REF(J,1);
+* */

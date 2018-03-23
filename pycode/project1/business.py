@@ -89,6 +89,10 @@ def get_share(conn, code, autype):
     result = util.execute(conn, "select * from hfq_share where code = " + code)
     # print(result)
 
+def get_search(conn):
+    result = util.execute(conn, "select code,concat(name,'(',code,')') from stock_basics order by code;")
+    return result
+
 
 def get_hfq_share(conn, code):
     result = util.execute(conn, "select DATE_FORMAT(date,'%Y-%m-%d'),open,high,close,low,volume,amount,code  from tmp_hfq_share where code = '" + code+"'")

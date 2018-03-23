@@ -12,6 +12,14 @@ def hello_world():
 def index():
     return render_template("index.html",title = 'Home')
 
+@app.route('/get_search', methods=['GET','POST'])
+def get_search():
+    dict = request.form.to_dict()
+    conn = business.get_connection()
+    ret = business.get_search(conn)
+    business.close_connection(conn)
+    return jsonify(result = ret)
+
 @app.route('/get_hfq_share', methods=['GET','POST'])
 def get_hfq_share():
     dict = request.form.to_dict()

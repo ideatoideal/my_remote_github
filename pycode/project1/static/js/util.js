@@ -70,3 +70,15 @@ Array.prototype.toFixed = function (x) {
     }
     return re
 }
+
+$.fn.extend({
+    initOption:function(list,add_blank=false){
+        if(list == null) return null;
+        if(list.length == 0) return null;
+        if(list[0].length != 2) return null;
+        if(add_blank) $(this).append(`<option value=""></option>`)
+        for(let i=0;i<list.length;i++){
+            $(this).append(`<option value="${list[i][0]}">${list[i][1]}</option>`)
+        }
+    }
+})

@@ -1,3 +1,34 @@
+function share_compute(list, programme) {
+    let params = null;
+    let data = list.slice(0, list.length)
+    let result = []
+    for (let i = 0; i < list.length; i++) {
+        params = {
+            date: list[0],
+            open: list[1],
+            high: list[2],
+            close: list[3],
+            low: list[4],
+            volume: list[5],
+            amount: list[6],
+            data: data
+        }
+        result.append(share_programme(params,programme))
+    }
+}
+
+function share_programme(params,programme) {
+    let str = "function share_simulation(){ params = JSON.parse("+JSON.stringify(params)+") ";
+        str += `
+            for(key in params){
+                var key = params[key]
+            }
+        `
+        str+= programme
+        str+= " return "//TODO
+    str = "} share_simulation()"
+    eval(str)
+}
 
 function compute(list0, list, callback) {
     let tmp = list0.slice(0, list0.length)
@@ -29,7 +60,7 @@ function compute3(list0, list, callback) {
     let tmp = list0.slice(0, list0.length)
     for (let i = 0; i < list0.length; i++) {
         if (tmp[i] != null && list[i] != null) {
-            tmp[i] = callback(list0,list,i)
+            tmp[i] = callback(list0, list, i)
         }
         else {
             tmp[i] = null
@@ -76,14 +107,14 @@ Array.prototype.average = function () {
 
 //标准差
 Array.prototype.stdev = function (x = 20) {
-    let tmp = compute3(this, this.ma(x), function (list1, list2 ,i) {
-        if(i>=x-1){
+    let tmp = compute3(this, this.ma(x), function (list1, list2, i) {
+        if (i >= x - 1) {
             let sum = 0;
-            for(let t=i-x+1;t<=i;t++){
-                if(list1[t]==null||list2[i]==null) return null
-                sum+=Math.pow(list1[t]-list2[i],2)
+            for (let t = i - x + 1; t <= i; t++) {
+                if (list1[t] == null || list2[i] == null) return null
+                sum += Math.pow(list1[t] - list2[i], 2)
             }
-            return Math.pow(sum/x,1/2);
+            return Math.pow(sum / x, 1 / 2);
         }
         return null
     })
@@ -148,17 +179,17 @@ Array.prototype.devide = function (list) {
 Array.prototype.pow = function (list) {
     if (list instanceof Array) {
         return compute(this, list, function (a, b) {
-            return Math.pow(a,b)
+            return Math.pow(a, b)
         })
     } else {//若为数字
         return compute2(this, function (a) {
-            return Math.pow(a,list)
+            return Math.pow(a, list)
         })
     }
 }
 
 
-Array.prototype.boll = function (x=20) {
+Array.prototype.boll = function (x = 20) {
     let std = this.stdev(x).multiply(2)
     let tmp = []
 
