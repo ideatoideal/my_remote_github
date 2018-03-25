@@ -1,34 +1,44 @@
 function share_compute(list, programme) {
+
     let params = null;
     let data = list.slice(0, list.length)
     let result = []
+    params = {
+        date: list[0],
+        open: list[1],
+        high: list[2],
+        close: list[3],
+        low: list[4],
+        volume: list[5],
+        amount: list[6],
+        index:i
+    }
     for (let i = 0; i < list.length; i++) {
-        params = {
-            date: list[0],
-            open: list[1],
-            high: list[2],
-            close: list[3],
-            low: list[4],
-            volume: list[5],
-            amount: list[6],
-            data: data
-        }
+
+        // data color
         result.append(share_programme(params,programme))
     }
 }
 
 function share_programme(params,programme) {
-    let str = "function share_simulation(){ params = JSON.parse("+JSON.stringify(params)+") ";
+    function ma(type) {
+        //alert(type)
+    }
+    let str = "function share_simulation(){ params = JSON.parse('"+JSON.stringify(params)+"') ";
         str += `
-            for(key in params){
-                var key = params[key]
-            }
+            output = []
+            let index = params.index;
+            let open = "open";let close = "close";let high = "high";let close = "close";let low = "low";let volume = "volume";
+            let amount = "amount";
         `
         str+= programme
-        str+= " return "//TODO
-    str = "} share_simulation()"
-    eval(str)
+        str+= `
+        return output`
+    str += "} share_simulation()"
+    return eval(str)
 }
+
+
 
 function compute(list0, list, callback) {
     let tmp = list0.slice(0, list0.length)
