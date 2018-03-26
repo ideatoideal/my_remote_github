@@ -5,10 +5,9 @@ import share_tool
 import pymysql
 
 
-
 def get_connection():
     conn = pymysql.connect("localhost", "test", "199104", "testdb", use_unicode=True,
-                                 charset="utf8")  # 默认utf-8 不然插入可能会出错
+                           charset="utf8")  # 默认utf-8 不然插入可能会出错
     return conn
 
 
@@ -84,10 +83,70 @@ def save_share(conn, code, autype):
         print(code + "已更新至" + end)
 
 
+def is_fundamental_update(conn, type):
+    ct = util.get_object(conn, "select count(1) from fundamental_update_log where type = '" + type + "'");
+    if ct == 0:
+        return False
+    else:
+        return True
+
+
+def get_fundamental_year(conn, type):
+    return util.get_object(conn, "select max(year) from fundamental_update_log where type = '" + type + "'")
+
+
+def get_fundamental_quarter(conn, type):
+    return util.get_object(conn,"select max(quarter) from fundamental_update_log where type = '" + type + "' and  year = (select max(year) from fundamental_update_log where type = '" + type + "') ")
+
+
+def save_fundamental_data(conn, type):  # type report_data
+    year, quarter,data = 1992, 1,None
+    while True:
+        try:
+            if not is_fundamental_update(conn, type):
+                data = share_tool.get_fundamental_data(year, quarter,type)
+                util.insert(conn, "fundamental_update_log", {"year": str(year), "quarter": str(quarter), "type": str(type)})
+                conn.commit()
+            else:
+                year = get_fundamental_year(conn, type)
+                quarter = get_fundamental_quarter(conn, type)
+                break
+        except Exception as e:
+            print(type + "初始年季" + str(year) + "," + str(quarter) + "发生异常:\n")
+            print(e)
+            if 4 == quarter:
+                year += 1
+                quarter = 1
+            else:
+                quarter += 1
+    while True:
+        try:
+            if 4 == quarter:
+                year += 1
+                quarter = 1
+            else:
+                quarter += 1
+            if int(util.get_now_year()) < year:
+                print(type + "已更新到最新")
+                return
+            data = share_tool.get_fundamental_data(year, quarter,type)
+            #print(data)
+            # 保存dataframe数据至库表
+            util.save_dataframe(conn=conn, data=data, table_name=type, primary_key="code,year,quarter",
+                                save_index=False)
+            util.insert(conn, "fundamental_update_log", {"year": str(year), "quarter": str(quarter), "type": str(type)})
+            conn.commit()
+        except Exception as e:
+            print(type+"更新年季" + str(year) + "," + str(quarter) + "发生异常:\n")
+            print(e)
+
+
+
 def get_share(conn, code, autype):
     save_share(conn, code, autype)
     result = util.execute(conn, "select * from hfq_share where code = " + code)
     # print(result)
+
 
 def get_search(conn):
     result = util.execute(conn, "select code,concat(name,'(',code,')') from stock_basics order by code;")
@@ -95,7 +154,8 @@ def get_search(conn):
 
 
 def get_hfq_share(conn, code):
-    result = util.execute(conn, "select DATE_FORMAT(date,'%Y-%m-%d'),open,high,close,low,volume,amount,code  from tmp_hfq_share where code = '" + code+"'")
+    result = util.execute(conn,
+                          "select DATE_FORMAT(date,'%Y-%m-%d'),open,high,close,low,volume,amount,code  from tmp_hfq_share where code = '" + code + "'")
     return result
 
 

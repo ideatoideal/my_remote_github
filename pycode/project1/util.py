@@ -53,6 +53,22 @@ def get_now_day():
     return time.strftime('%Y-%m-%d', time.localtime(time.time()))
 
 
+def get_now_year():
+    return time.strftime('%Y', time.localtime(time.time()))
+
+
+def get_now_month():
+    return time.strftime('%m', time.localtime(time.time()))
+
+
+def get_now_quarter():
+    m = int(get_now_month())
+    if 1 <= m <= 3: return "1"
+    if 4 <= m <= 6: return "2"
+    if 7 <= m <= 9: return "3"
+    if 10 <= m <= 12: return "4"
+
+
 def get_insert_sql(cursor, tbname):
     sql = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '" + tbname + "'";
     cursor.execute(sql)
@@ -120,7 +136,7 @@ def save_dataframe(conn, data, table_name, primary_key, truncate=False, save_ind
 
     # 构建建表所需字段
     name_list = list(data)
-    type_list = data.dtypes
+    type_list, transform_type_list, ttype = data.dtypes, [], None
     columns = []
     if save_index:
         if str(data.index.dtype) == "object":
@@ -132,8 +148,11 @@ def save_dataframe(conn, data, table_name, primary_key, truncate=False, save_ind
         if str(type_list[i]) == "object":
             length = get_column_large_len(data[name_list[i]].values)
             columns.append(name_list[i] + " varchar(" + str(length) + ")")
+            transform_type_list.append("object")
         else:
-            columns.append(name_list[i] + " " + transform_type(str(type_list[i])))
+            ttype = transform_type(str(type_list[i]))
+            columns.append(name_list[i] + " " + ttype)
+            transform_type_list.append(ttype)
     columns = ",".join(columns)
     if has_table:
         if truncate:
@@ -169,7 +188,11 @@ def save_dataframe(conn, data, table_name, primary_key, truncate=False, save_ind
         if save_index:
             tmp_row.append(str(index_list[i]))
         for j in range(len(data_list[i])):
-            tmp_row.append(str(data_list[i][j]))
+            if (transform_type_list[j] == "bigint" or transform_type_list[j] == "double") and str(
+                    data_list[i][j]) == "nan":
+                tmp_row.append(None)
+            else:
+                tmp_row.append(str(data_list[i][j]))
         merge_list.append(tmp_row)
     # data_list = numpy.concatenate( ( numpy.array(data.index)[:,None],numpy.array(data) ),axis=1 )
     cursor.executemany(sql, merge_list)

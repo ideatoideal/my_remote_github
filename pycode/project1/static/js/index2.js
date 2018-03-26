@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    initPlugin()
+    //initPlugin()
     post("get_hfq_share", {code: '000001'}, function (data) {
         //date,open,high,close,low,volume,amount,code
         result = data.result
@@ -88,7 +88,7 @@ function initPlugin() {
                 if (text.indexOf(params.term) > -1) {
                     return data
                 }
-                text = text.replace("行","H")//常见多音字处理
+                text = text.replace("行", "H")//常见多音字处理
                 if (text.toPinYin().toUpperCase().indexOf(params.term.toUpperCase()) > -1) {
                     return data
                 }

@@ -39,13 +39,19 @@ util.save_dataframe(conn=conn, data=share_data, table_name="stock_basics", prima
 print(share_data)
 """
 
+#business.save_fundamental_data(conn,"report_data")
+#business.save_fundamental_data(conn,"profit_data")
+business.save_fundamental_data(conn,"operation_data")
+business.save_fundamental_data(conn,"growth_data")
+business.save_fundamental_data(conn,"debtpaying_data")
+business.save_fundamental_data(conn,"cashflow_data")
 
-
-#code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log) order by code")
-code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log) order by code desc")
+"""
+code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log) order by code")
+#code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log) order by code desc")
 for row in code_list:
     code = row[0]
-    if int(code) >= 603598:
+    if int(code) < 878:
         continue
     for i in range(1):
         try:
@@ -55,6 +61,7 @@ for row in code_list:
             #print("开始睡眠"+str(60+30*i)+"s")
             #time.sleep(60+30*i)
             #print("重新下载"+code+",第"+str(i+1)+"次")
+"""
 
 
 
