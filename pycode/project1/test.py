@@ -39,29 +39,50 @@ util.save_dataframe(conn=conn, data=share_data, table_name="stock_basics", prima
 print(share_data)
 """
 
-#business.save_fundamental_data(conn,"report_data")
-#business.save_fundamental_data(conn,"profit_data")
-business.save_fundamental_data(conn,"operation_data")
-business.save_fundamental_data(conn,"growth_data")
-business.save_fundamental_data(conn,"debtpaying_data")
-business.save_fundamental_data(conn,"cashflow_data")
 
+
+""" 基本
+business.save_fundamental_data(conn,"report_data",redownload=True)
+business.save_fundamental_data(conn,"profit_data",redownload=True)
+business.save_fundamental_data(conn,"operation_data",redownload=True)
+business.save_fundamental_data(conn,"growth_data",redownload=True)
+business.save_fundamental_data(conn,"debtpaying_data",redownload=True)
+business.save_fundamental_data(conn,"cashflow_data",redownload=True)
 """
-code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log) order by code")
-#code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log) order by code desc")
+
+""" index
+data = tushare.get_index()
+util.save_dataframe(conn=conn, data=data, table_name="share_index", primary_key="code",save_index=False)
+"""
+
+""" hfq_share_index
+
+code_list = util.execute(conn,"select code from share_index where code not in (select code from update_log where type = 'index')  order by code")
 for row in code_list:
     code = row[0]
-    if int(code) < 878:
-        continue
+    try:
+        business.get_index_share(conn, code)
+    except Exception:
+        print("!!!警告:下载index类型" + code + "发生异常");
+"""
+
+#print(util.get_yesterday())
+
+
+code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log where type = 'hfq') order by code")
+#code_list = util.execute(conn,"select code from stock_basics where code not in (select code from update_log where type = 'hfq')  order by code desc")
+for row in code_list:
+    code = row[0]
     for i in range(1):
         try:
             business.get_share(conn, code, "hfq")
-        except Exception:
+        except Exception as e:
             print("!!!警告:下载"+code+"发生异常");
+            print(e)
             #print("开始睡眠"+str(60+30*i)+"s")
             #time.sleep(60+30*i)
             #print("重新下载"+code+",第"+str(i+1)+"次")
-"""
+
 
 
 

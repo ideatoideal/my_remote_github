@@ -1,6 +1,8 @@
 import time
 import calendar
 
+import datetime
+
 
 def execute(conn, sql):
     cursor = conn.cursor()
@@ -51,6 +53,14 @@ def get_now_time():
 
 def get_now_day():
     return time.strftime('%Y-%m-%d', time.localtime(time.time()))
+
+
+def get_yesterday(today=None):
+    if today is None:
+        today = datetime.date.today()
+    else:
+        today = datetime.datetime.strptime(today, "%Y-%m-%d")
+    return (today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
 
 def get_now_year():
@@ -139,19 +149,21 @@ def save_dataframe(conn, data, table_name, primary_key, truncate=False, save_ind
     type_list, transform_type_list, ttype = data.dtypes, [], None
     columns = []
     if save_index:
+        if data.index.name is None:
+            data.index.name = "id"
         if str(data.index.dtype) == "object":
             length = get_column_large_len(data.index.values)
-            columns.append(data.index.name + " varchar(" + str(length) + ")")
+            columns.append("`" + data.index.name + "` varchar(" + str(length) + ")")  # 加``为了防止自动生成的字段名未关键字
         else:
-            columns.append(data.index.name + " " + transform_type(str(data.index.dtype)))
+            columns.append("`" + data.index.name + "` " + transform_type(str(data.index.dtype)))
     for i in range(len(name_list)):
         if str(type_list[i]) == "object":
             length = get_column_large_len(data[name_list[i]].values)
-            columns.append(name_list[i] + " varchar(" + str(length) + ")")
+            columns.append("`" + name_list[i] + "` varchar(" + str(length) + ")")
             transform_type_list.append("object")
         else:
             ttype = transform_type(str(type_list[i]))
-            columns.append(name_list[i] + " " + ttype)
+            columns.append("`" + name_list[i] + "` " + ttype)
             transform_type_list.append(ttype)
     columns = ",".join(columns)
     if has_table:
@@ -175,7 +187,7 @@ def save_dataframe(conn, data, table_name, primary_key, truncate=False, save_ind
         values.append("%s")
     for i in range(len(name_list)):
         values.append("%s")
-        columns.append(name_list[i])
+        columns.append("`" + name_list[i] + "`")
     columns = ",".join(columns)
     values = ",".join(values)
     sql = "insert ignore " + table_name + "(" + columns + ") values(" + values + ")"
